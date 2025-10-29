@@ -12,6 +12,8 @@ export default function App() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [hasScrolled, setHasScrolled] = useState(false)
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
   const shaderContainerRef = useRef<HTMLDivElement>(null)
@@ -147,6 +149,9 @@ export default function App() {
         const scrollLeft = scrollContainerRef.current.scrollLeft
         const newSection = Math.round(scrollLeft / sectionWidth)
 
+        // Check if user has scrolled
+        setHasScrolled(scrollLeft > 50)
+
         if (newSection !== currentSection && newSection >= 0 && newSection <= 4) {
           setCurrentSection(newSection)
         }
@@ -211,20 +216,25 @@ export default function App() {
       </div>
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-6 transition-opacity duration-700 md:px-12 ${
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-all duration-500 ${
           isLoaded ? "opacity-100" : "opacity-0"
+        } ${
+          hasScrolled 
+            ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-foreground/10" 
+            : "bg-transparent"
         }`}
       >
         <button
           onClick={() => scrollToSection(0)}
           className="flex items-center gap-2 transition-transform hover:scale-105"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground/15 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-foreground/25">
-            <span className="font-sans text-xl font-bold text-foreground">A</span>
+          <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg bg-foreground/15 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-foreground/25">
+            <span className="font-sans text-lg md:text-xl font-bold text-foreground">A</span>
           </div>
-          <span className="font-sans text-xl font-semibold tracking-tight text-foreground">Acme</span>
+          <span className="font-sans text-lg md:text-xl font-semibold tracking-tight text-foreground">Acme</span>
         </button>
 
+        {/* Desktop Navigation */}
         <div className="hidden items-center gap-8 md:flex">
           {["Home", "Work", "Services", "About", "Contact"].map((item, index) => (
             <button
@@ -244,10 +254,60 @@ export default function App() {
           ))}
         </div>
 
-        <MagneticButton variant="secondary" onClick={() => scrollToSection(4)}>
-          Get Started
-        </MagneticButton>
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden flex items-center justify-center h-10 w-10 rounded-lg bg-foreground/15 backdrop-blur-md transition-all duration-300 hover:bg-foreground/25"
+          aria-label="Toggle menu"
+        >
+          <div className="flex flex-col gap-1.5">
+            <span className={`h-0.5 w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`h-0.5 w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+            <span className={`h-0.5 w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+          </div>
+        </button>
+
+        <div className="hidden md:block">
+          <MagneticButton variant="secondary" onClick={() => scrollToSection(4)}>
+            Get Started
+          </MagneticButton>
+        </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-background/95 backdrop-blur-lg md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div className="flex flex-col items-center justify-center h-full gap-8">
+            {["Home", "Work", "Services", "About", "Contact"].map((item, index) => (
+              <button
+                key={item}
+                onClick={() => {
+                  scrollToSection(index)
+                  setMobileMenuOpen(false)
+                }}
+                className={`font-sans text-3xl font-light transition-colors ${
+                  currentSection === index ? "text-foreground" : "text-foreground/60"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+            <MagneticButton
+              size="lg"
+              variant="primary"
+              onClick={() => {
+                scrollToSection(4)
+                setMobileMenuOpen(false)
+              }}
+            >
+              Get Started
+            </MagneticButton>
+          </div>
+        </div>
+      )}
 
       <div
         ref={scrollContainerRef}
@@ -258,29 +318,29 @@ export default function App() {
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {/* Hero Section */}
-        <section className="flex min-h-screen w-screen shrink-0 flex-col justify-end px-6 pb-16 pt-24 md:px-12 md:pb-24">
+        <section className="flex min-h-screen w-screen shrink-0 flex-col justify-center md:justify-end px-4 pb-20 pt-20 sm:px-6 md:px-12 md:pb-24 md:pt-24">
           <div className="max-w-3xl">
-            <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-4 py-1.5 backdrop-blur-md duration-700">
-              <p className="font-mono text-xs text-foreground/90">WebGL Powered Design</p>
+            <div className="mb-3 md:mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-3 py-1 md:px-4 md:py-1.5 backdrop-blur-md duration-700">
+              <p className="font-mono text-[10px] md:text-xs text-foreground/90">WebGL Powered Design</p>
             </div>
-            <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-6xl font-light leading-[1.1] tracking-tight text-foreground duration-1000 md:text-7xl lg:text-8xl">
+            <h1 className="mb-4 md:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light leading-[1.1] tracking-tight text-foreground duration-1000">
               <span className="text-balance">
                 Creative experiences
                 <br />
                 in fluid motion
               </span>
             </h1>
-            <p className="mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-lg leading-relaxed text-foreground/90 duration-1000 delay-200 md:text-xl">
+            <p className="mb-6 md:mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-base sm:text-lg md:text-xl leading-relaxed text-foreground/90 duration-1000 delay-200">
               <span className="text-pretty">
                 Transforming digital spaces with dynamic shader effects and real-time visual experiences that captivate
                 and inspire.
               </span>
             </p>
-            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
+            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-3 md:gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
               <MagneticButton
                 size="lg"
                 variant="primary"
-                onClick={() => window.open("https://github.com", "_blank")}
+                onClick={() => window.open("https://github.com/iuginT/lp-horizontal-react", "_blank")}
               >
                 View on GitHub
               </MagneticButton>
@@ -290,7 +350,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500">
+          <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500">
             <div className="flex items-center gap-2">
               <p className="font-mono text-xs text-foreground/80">Scroll to explore</p>
               <div className="flex h-6 w-12 items-center justify-center rounded-full border border-foreground/20 bg-foreground/15 backdrop-blur-md">
