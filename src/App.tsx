@@ -13,10 +13,12 @@ export default function App() {
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showNav, setShowNav] = useState(true)
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
   const shaderContainerRef = useRef<HTMLDivElement>(null)
   const scrollThrottleRef = useRef<number>()
+  const hideNavTimeout = useRef<number>()
 
   useEffect(() => {
     const checkShaderReady = () => {
@@ -152,6 +154,17 @@ export default function App() {
           setCurrentSection(newSection)
         }
 
+        // Hide nav when scrolling, show when stopped
+        setShowNav(false)
+        
+        if (hideNavTimeout.current) {
+          clearTimeout(hideNavTimeout.current)
+        }
+        
+        hideNavTimeout.current = window.setTimeout(() => {
+          setShowNav(true)
+        }, 150)
+
         scrollThrottleRef.current = undefined
       })
     }
@@ -167,6 +180,9 @@ export default function App() {
       }
       if (scrollThrottleRef.current) {
         cancelAnimationFrame(scrollThrottleRef.current)
+      }
+      if (hideNavTimeout.current) {
+        clearTimeout(hideNavTimeout.current)
       }
     }
   }, [currentSection])
@@ -211,12 +227,9 @@ export default function App() {
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      {/* Gradient Fade at Top - prevents text overlap */}
-      <div className="fixed top-0 left-0 right-0 h-24 md:h-32 bg-gradient-to-b from-background via-background/70 to-transparent pointer-events-none z-40" />
-
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-opacity duration-700 ${
-          isLoaded ? "opacity-100" : "opacity-0"
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-all duration-500 ${
+          isLoaded && showNav ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full"
         }`}
       >
         <button
