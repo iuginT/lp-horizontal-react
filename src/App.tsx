@@ -13,7 +13,6 @@ export default function App() {
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [hasScrolled, setHasScrolled] = useState(false)
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
   const shaderContainerRef = useRef<HTMLDivElement>(null)
@@ -149,9 +148,6 @@ export default function App() {
         const scrollLeft = scrollContainerRef.current.scrollLeft
         const newSection = Math.round(scrollLeft / sectionWidth)
 
-        // Detect scroll for header background (very subtle threshold)
-        setHasScrolled(scrollLeft > 30)
-
         if (newSection !== currentSection && newSection >= 0 && newSection <= 4) {
           setCurrentSection(newSection)
         }
@@ -215,13 +211,12 @@ export default function App() {
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
+      {/* Gradient Fade at Top - prevents text overlap */}
+      <div className="fixed top-0 left-0 right-0 h-24 md:h-32 bg-gradient-to-b from-background via-background/70 to-transparent pointer-events-none z-40" />
+
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-all duration-700 ease-in-out ${
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-opacity duration-700 ${
           isLoaded ? "opacity-100" : "opacity-0"
-        } ${
-          hasScrolled 
-            ? "bg-gradient-to-b from-background/40 via-background/30 to-transparent backdrop-blur-sm" 
-            : "bg-transparent"
         }`}
       >
         <button
