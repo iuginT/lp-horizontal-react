@@ -8,10 +8,6 @@ export function CustomCursor() {
   const isPointerRef = useRef(false)
 
   useEffect(() => {
-    // Hide custom cursor on mobile/touch devices
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      return
-    }
     let animationFrameId: number
 
     const lerp = (start: number, end: number, factor: number) => {
@@ -50,23 +46,18 @@ export function CustomCursor() {
     }
   }, [])
 
-  // Don't render custom cursor on mobile
-  if (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
-    return null
-  }
-
   return (
     <>
       <div
         ref={outerRef}
-        className="pointer-events-none fixed left-0 top-0 z-50 mix-blend-difference will-change-transform hidden md:block"
+        className="pointer-events-none fixed left-0 top-0 z-50 mix-blend-difference will-change-transform"
         style={{ contain: "layout style paint" }}
       >
         <div className="h-4 w-4 rounded-full border-2 border-white" />
       </div>
       <div
         ref={innerRef}
-        className="pointer-events-none fixed left-0 top-0 z-50 mix-blend-difference will-change-transform hidden md:block"
+        className="pointer-events-none fixed left-0 top-0 z-50 mix-blend-difference will-change-transform"
         style={{ contain: "layout style paint" }}
       >
         <div className="h-2 w-2 rounded-full bg-white" />

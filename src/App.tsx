@@ -149,8 +149,8 @@ export default function App() {
         const scrollLeft = scrollContainerRef.current.scrollLeft
         const newSection = Math.round(scrollLeft / sectionWidth)
 
-        // Check if user has scrolled
-        setHasScrolled(scrollLeft > 50)
+        // Detect scroll for header background (very subtle threshold)
+        setHasScrolled(scrollLeft > 30)
 
         if (newSection !== currentSection && newSection >= 0 && newSection <= 4) {
           setCurrentSection(newSection)
@@ -216,11 +216,11 @@ export default function App() {
       </div>
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-all duration-500 ${
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 md:px-12 md:py-6 transition-all duration-700 ease-in-out ${
           isLoaded ? "opacity-100" : "opacity-0"
         } ${
           hasScrolled 
-            ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-foreground/10" 
+            ? "bg-gradient-to-b from-background/40 via-background/30 to-transparent backdrop-blur-sm" 
             : "bg-transparent"
         }`}
       >
@@ -318,29 +318,29 @@ export default function App() {
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {/* Hero Section */}
-        <section className="flex min-h-screen w-screen shrink-0 flex-col justify-center md:justify-end px-4 pb-20 pt-20 sm:px-6 md:px-12 md:pb-24 md:pt-24">
+        <section className="flex min-h-screen w-screen shrink-0 flex-col justify-end px-6 pb-16 pt-24 md:px-12 md:pb-24">
           <div className="max-w-3xl">
-            <div className="mb-3 md:mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-3 py-1 md:px-4 md:py-1.5 backdrop-blur-md duration-700">
-              <p className="font-mono text-[10px] md:text-xs text-foreground/90">WebGL Powered Design</p>
+            <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-4 py-1.5 backdrop-blur-md duration-700">
+              <p className="font-mono text-xs text-foreground/90">WebGL Powered Design</p>
             </div>
-            <h1 className="mb-4 md:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light leading-[1.1] tracking-tight text-foreground duration-1000">
+            <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-6xl font-light leading-[1.1] tracking-tight text-foreground duration-1000 md:text-7xl lg:text-8xl">
               <span className="text-balance">
                 Creative experiences
                 <br />
                 in fluid motion
               </span>
             </h1>
-            <p className="mb-6 md:mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-base sm:text-lg md:text-xl leading-relaxed text-foreground/90 duration-1000 delay-200">
+            <p className="mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-lg leading-relaxed text-foreground/90 duration-1000 delay-200 md:text-xl">
               <span className="text-pretty">
                 Transforming digital spaces with dynamic shader effects and real-time visual experiences that captivate
                 and inspire.
               </span>
             </p>
-            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-3 md:gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
+            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
               <MagneticButton
                 size="lg"
                 variant="primary"
-                onClick={() => window.open("https://github.com/iuginT/lp-horizontal-react", "_blank")}
+                onClick={() => window.open("https://github.com", "_blank")}
               >
                 View on GitHub
               </MagneticButton>
@@ -350,7 +350,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500">
             <div className="flex items-center gap-2">
               <p className="font-mono text-xs text-foreground/80">Scroll to explore</p>
               <div className="flex h-6 w-12 items-center justify-center rounded-full border border-foreground/20 bg-foreground/15 backdrop-blur-md">
